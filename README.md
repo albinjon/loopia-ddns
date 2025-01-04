@@ -2,7 +2,7 @@
 
 Updates DNS records in Loopia through their API.
 
-Required environment variables:
+Required environment variables:  
 USERNAME=<your-api-user> (don't forget the @loopiaapi)  
 PASSWORD=<your-api-pw>  
 DOMAIN=<your-domain>  
