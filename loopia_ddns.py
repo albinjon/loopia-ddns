@@ -80,8 +80,8 @@ class LoopiaUpdater:
                 subdomain,
             ]
 
-            cached_zone_record_id = self.zone_record_ids[subdomain]
-            if cached_zone_record_id == None:
+            cached_zone_record_id = self.zone_record_ids[subdomain] or 0
+            if cached_zone_record_id == 0:
                 response = cast(List[Dict[str, str]], client.getZoneRecords(*params))
                 existing_dns_record = len(response) > 0
                 if existing_dns_record:
