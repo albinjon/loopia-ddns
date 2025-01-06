@@ -70,44 +70,35 @@ class LoopiaUpdater:
             bool: True if update was successful, False otherwise
         """
         try:
-            # Create XML-RPC client
             client = xmlrpc.client.ServerProxy(uri = self.api_url, encoding='utf-8')
-            if self.zone_record_ids[subdomain] == None:
-                params: List[Union[str, dict]] = [
-                    self.username,
-                    self.password,
-                    self.domain,
-                    subdomain,
-                ]
+
+            record_id = 0
+            params: List[Union[str, dict]] = [
+                self.username,
+                self.password,
+                self.domain,
+                subdomain,
+            ]
+
+            cached_zone_record_id = self.zone_record_ids[subdomain]
+            if cached_zone_record_id == None:
                 response = cast(List[Dict[str, str]], client.getZoneRecords(*params))
-                if len(response) < 1:
-                    record_obj = {
-                        'type': 'A',           # A record for IPv4
-                        'ttl': 300,            # 5 minutes TTL for frequent updates
-                        'priority': 0,         # Not used for A records
-                        'rdata': new_ip,       # The new IP address
-                        'record_id': 0         # 0 for new records
-                    }
-                    params.append(record_obj)
-                    client.addZoneRecord(*params)
-                else:
-                    self.zone_record_ids[subdomain] = response[0].get('record_id')
+                existing_dns_record = len(response) > 0
+                if existing_dns_record:
+                    record_id = self.zone_record_ids[subdomain] = response[0].get('record_id')
+            else:
+                record_id = cached_zone_record_id
 
             record_obj = {
                 'type': 'A',           # A record for IPv4
                 'ttl': 300,            # 5 minutes TTL for frequent updates
                 'priority': 0,         # Not used for A records
                 'rdata': new_ip,       # The new IP address
-                'record_id': self.zone_record_ids[subdomain]
+                'record_id': record_id # 0 for new records, but when we already have a record, we want 
+                                       # to update it.
             }
-            params = [
-                self.username,
-                self.password,
-                self.domain,
-                subdomain,
-                record_obj
-            ]
-            
+
+            params.append(record_obj)
             status = client.updateZoneRecord(*params)
 
             if status == 'OK':
