@@ -81,6 +81,7 @@ class LoopiaUpdater:
             ]
 
             cached_zone_record_id = self.zone_record_ids[subdomain] or 0
+            print(cached_zone_record_id)
             if cached_zone_record_id == 0:
                 response = cast(List[Dict[str, str]], client.getZoneRecords(*params))
                 existing_dns_record = len(response) > 0
@@ -88,6 +89,7 @@ class LoopiaUpdater:
                     record_id = self.zone_record_ids[subdomain] = response[0].get('record_id')
             else:
                 record_id = cached_zone_record_id
+            print(record_id)
 
             record_obj = {
                 'type': 'A',           # A record for IPv4
@@ -99,7 +101,8 @@ class LoopiaUpdater:
             }
 
             params.append(record_obj)
-            status = client.updateZoneRecord(*params)
+            # Add can be used both to update and to add. 
+            status = client.addZoneRecord(*params)
 
             if status == 'OK':
                 self.current_ips[subdomain] = new_ip
