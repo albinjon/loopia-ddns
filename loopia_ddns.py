@@ -131,7 +131,7 @@ class LoopiaUpdater:
                 if new_ip != self.current_ips[subdomain]:
                     results[subdomain] = self.update_dns_record(subdomain, new_ip)
                     if results[subdomain]:
-                        logging.info(f"Updated {subdomain}.{self.domain} to {new_ip} at {datetime.now()}")
+                        logging.info(f"Updated {subdomain}.{self.domain} to {new_ip} at {datetime.now()}.")
                 else:
                     logging.info(f"No IP change needed for {subdomain}.{self.domain}")
                     results[subdomain] = True
