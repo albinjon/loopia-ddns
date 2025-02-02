@@ -153,6 +153,7 @@ def main():
     domain = result['LOOPIA_DOMAIN']
     subdomains = result['LOOPIA_SUBDOMAINS']
     seconds_interval=result['LOOPIA_UPDATE_INTERVAL']
+    logging.info(result)
     if(not (username and password and domain and subdomains and seconds_interval)):
         raise Exception('Missing required environment variables')
     split_sub = subdomains.split(',')
