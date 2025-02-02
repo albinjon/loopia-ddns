@@ -144,12 +144,15 @@ class LoopiaUpdater:
 
 def main():
     load_dotenv()
-    username=os.getenv('USERNAME')
-    password=os.getenv('PASSWORD')
-    domain=os.getenv('DOMAIN')
-    # Comma separated list of subdomains
-    subdomains=os.getenv('SUBDOMAINS')
-    seconds_interval=os.getenv('UPDATE_INTERVAL')
+    api_key=os.getenv('CONFIG_API_KEY')
+    config_base=os.getenv('CONFIG_BASE_URL')
+    result = requests.get(f"{config_base}/api/config/all", headers={'Authorization': f"Bearer {api_key}"}).json()
+    print(result)
+    password = result['LOOPIA_PASSWORD']
+    username = result['LOOPIA_USERNAME']
+    domain = result['LOOPIA_DOMAIN']
+    subdomains = result['LOOPIA_SUBDOMAINS']
+    seconds_interval=result['LOOPIA_UPDATE_INTERVAL']
     if(not (username and password and domain and subdomains and seconds_interval)):
         raise Exception('Missing required environment variables')
     split_sub = subdomains.split(',')
