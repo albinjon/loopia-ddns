@@ -142,18 +142,23 @@ class LoopiaUpdater:
             logging.error(f"Failed to update records: {str(e)}")
             return {subdomain: False for subdomain in self.subdomains}
 
+def get_value_by_key(data_list, target_key):
+    for item in data_list:
+        if item['key'] == target_key:
+            return item['value']
+    return None
+
 def main():
     load_dotenv()
     api_key=os.getenv('CONFIG_API_KEY')
     config_base=os.getenv('CONFIG_BASE_URL')
     result = requests.get(f"{config_base}/api/config/all", headers={'Authorization': f"Bearer {api_key}"}).json()
     print(result)
-    password = result['LOOPIA_PASSWORD']
-    username = result['LOOPIA_USERNAME']
-    domain = result['LOOPIA_DOMAIN']
-    subdomains = result['LOOPIA_SUBDOMAINS']
-    seconds_interval=result['LOOPIA_UPDATE_INTERVAL']
-    logging.info(result)
+    password = get_value_by_key(result,'LOOPIA_PASSWORD')
+    username = get_value_by_key(result,'LOOPIA_USERNAME')
+    domain = get_value_by_key(result,'LOOPIA_DOMAIN')
+    subdomains = get_value_by_key(result,'LOOPIA_SUBDOMAINS')
+    seconds_interval=get_value_by_key(result,'LOOPIA_UPDATE_INTERVAL')
     if(not (username and password and domain and subdomains and seconds_interval)):
         raise Exception('Missing required environment variables')
     split_sub = subdomains.split(',')
