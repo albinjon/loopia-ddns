@@ -153,7 +153,6 @@ def main():
     api_key=os.getenv('CONFIG_API_KEY')
     config_base=os.getenv('CONFIG_BASE_URL')
     result = requests.get(f"{config_base}/api/config/all", headers={'Authorization': f"Bearer {api_key}"}).json()
-    print(result)
     password = get_value_by_key(result,'LOOPIA_PASSWORD')
     username = get_value_by_key(result,'LOOPIA_USERNAME')
     domain = get_value_by_key(result,'LOOPIA_DOMAIN')
